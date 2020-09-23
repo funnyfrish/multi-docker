@@ -4,10 +4,10 @@ services:
   - docker
 
 before_install:
-  - docker build -t bekir/react-test -f Dockerfile.dev ./client/Dockerfile.dev ./client
+  - docker build -t bekirbahadir/react-test -f Dockerfile.dev ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true bekir/react-test npm run test 
+  - docker run -e CI=true bekirbahadir/react-test npm run test 
 
 after_success:
   - docker build -t bekirbahadir/multi-client ./client
