@@ -1,0 +1,39 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t bekir/react-test -f Dockerfile.dev ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true bekir/react-test npm run test 
+
+after_success:
+  - docker build -t bekirbahadir/multi-client ./client
+  - docker build -t bekirbahadir/multi-nginx ./nginx
+  - docker build -t bekirbahadir/multi-server ./server
+  - docker build -t bekirbahadir/multi-worker ./worker 
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #Take those images and push them to docker hub
+  - docker push bekirbahadir/multi-client
+  - docker push bekirbahadir/multi-nginx
+  - docker push bekirbahadir/multi-server
+  - docker push bekirbahadir/multi-worker
+
+
+#deploy:
+#   provider: elasticbeanstalk
+#   region: "us-east-2"
+#   app: "docker"
+#   env: "Docker-env"
+#   bucket_name: "elasticbeanstalk-us-east-2-819305176793"
+#   bucket_path: "docker"
+#   on:
+#      branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
+
+
+
